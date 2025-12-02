@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Example 5: Color Picker & Gradient Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 700px;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 30px;
+            font-size: 32px;
+        }
+        
+        .preview-section {
+            margin-bottom: 30px;
+        }
+        
+        .gradient-preview {
+            width: 100%;
+            height: 200px;
+            border-radius: 15px;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+        
+        .controls-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .control-group {
+            margin-bottom: 25px;
+        }
+        
+        .control-group label {
+            display: block;
+            margin-bottom: 10px;
+            color: #333;
+            font-weight: 600;
+            font-size: 16px;
+        }
+        
+        .color-input-group {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        
+        input[type="color"] {
+            width: 80px;
+            height: 50px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        
+        input[type="color"]:hover {
+            transform: scale(1.1);
+        }
+        
+        .color-value {
+            flex: 1;
+            padding: 12px;
+            background: white;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            color: #667eea;
+        }
+        
+        select, input[type="range"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        
+        input[type="range"] {
+            padding: 0;
+        }
+        
+        .angle-display {
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+            margin-top: 10px;
+        }
+        
+        .code-output {
+            background: #2d2d2d;
+            color: #f8f8f2;
+            padding: 20px;
+            border-radius: 10px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            margin-top: 20px;
+            position: relative;
+            overflow-x: auto;
+        }
+        
+        .copy-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 8px 16px;
+            background-color: #667eea;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s;
+        }
+        
+        .copy-button:hover {
+            background-color: #5568d3;
+            transform: scale(1.05);
+        }
+        
+        .copy-button.copied {
+            background-color: #28a745;
+        }
+        
+        .preset-colors {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+        
+        .preset-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            color: white;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .preset-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        .random-button {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 20px;
+        }
+        
+        .random-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+        
+        .explanation {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        
+        .explanation h3 {
+            color: #856404;
+            margin-bottom: 10px;
+        }
+        
+        .explanation ul {
+            margin-left: 20px;
+            color: #856404;
+        }
+        
+        .explanation li {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 Gradient Generator</h1>
+        
+        <div class="preview-section">
+            <div class="gradient-preview" id="gradientPreview">
+                Looks Great! 🌈
+            </div>
+        </div>
+        
+        <button class="random-button" onclick="randomGradient()">
+            🎲 Generate Random Gradient
+        </button>
+        
+        <div class="controls-section">
+            <div class="control-group">
+                <label>🎨 First Color:</label>
+                <div class="color-input-group">
+                    <input type="color" id="color1" value="#667eea" oninput="updateGradient()">
+                    <input type="text" class="color-value" id="color1Value" value="#667eea" readonly>
+                </div>
+            </div>
+            
+            <div class="control-group">
+                <label>🎨 Second Color:</label>
+                <div class="color-input-group">
+                    <input type="color" id="color2" value="#764ba2" oninput="updateGradient()">
+                    <input type="text" class="color-value" id="color2Value" value="#764ba2" readonly>
+                </div>
+            </div>
+            
+            <div class="control-group">
+                <label>📐 Gradient Direction:</label>
+                <select id="gradientType" onchange="updateGradient()">
+                    <option value="linear">Linear</option>
+                    <option value="radial">Radial</option>
+                </select>
+            </div>
+            
+            <div class="control-group" id="angleControl">
+                <label>🔄 Angle: <span id="angleValue">135</span>°</label>
+                <input type="range" id="angle" min="0" max="360" value="135" oninput="updateGradient()">
+            </div>
+            
+            <div class="control-group">
+                <label>💾 Preset Gradients:</label>
+                <div class="preset-colors">
+                    <button class="preset-btn" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%)" onclick="setPreset('#667eea', '#764ba2')">Purple</button>
+                    <button class="preset-btn" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%)" onclick="setPreset('#f093fb', '#f5576c')">Pink</button>
+                    <button class="preset-btn" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)" onclick="setPreset('#4facfe', '#00f2fe')">Blue</button>
+                    <button class="preset-btn" style="background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)" onclick="setPreset('#43e97b', '#38f9d7')">Green</button>
+                    <button class="preset-btn" style="background: linear-gradient(135deg, #fa709a 0%, #fee140 100%)" onclick="setPreset('#fa709a', '#fee140')">Sunset</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="code-output">
+            <button class="copy-button" id="copyButton" onclick="copyCode()">📋 Copy</button>
+            <div id="cssCode"></div>
+        </div>
+        
+        <div class="explanation">
+            <h3>💡 Concepts Learned:</h3>
+            <ul>
+                <li><strong>Color Input:</strong> HTML5 color picker</li>
+                <li><strong>Range Input:</strong> Slider control</li>
+                <li><strong>String Interpolation:</strong> Template literals</li>
+                <li><strong>Linear Gradient:</strong> Linear color transitions</li>
+                <li><strong>Radial Gradient:</strong> Circular color transitions</li>
+                <li><strong>Random Colors:</strong> Generating random RGB with Math.random()</li>
+                <li><strong>Clipboard API:</strong> Copying code to clipboard</li>
+                <li><strong>DOM Styling:</strong> Manipulating style.background</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function updateGradient() {
+            const color1 = document.getElementById('color1').value;
+            const color2 = document.getElementById('color2').value;
+            const angle = document.getElementById('angle').value;
+            const type = document.getElementById('gradientType').value;
+            const preview = document.getElementById('gradientPreview');
+            
+            // Update color values
+            document.getElementById('color1Value').value = color1;
+            document.getElementById('color2Value').value = color2;
+            document.getElementById('angleValue').textContent = angle;
+            
+            // Update angle control visibility
+            const angleControl = document.getElementById('angleControl');
+            angleControl.style.display = type === 'linear' ? 'block' : 'none';
+            
+            // Generate gradient
+            let gradient;
+            if (type === 'linear') {
+                gradient = `linear-gradient(${angle}deg, ${color1} 0%, ${color2} 100%)`;
+            } else {
+                gradient = `radial-gradient(circle, ${color1} 0%, ${color2} 100%)`;
+            }
+            
+            preview.style.background = gradient;
+            
+            // Update CSS code
+            updateCSSCode(gradient);
+        }
+        
+        function updateCSSCode(gradient) {
+            const cssCode = document.getElementById('cssCode');
+            cssCode.textContent = `.element {
+    background: ${gradient};
+}`;
+        }
+        
+        function setPreset(color1, color2) {
+            document.getElementById('color1').value = color1;
+            document.getElementById('color2').value = color2;
+            updateGradient();
+        }
+        
+        function randomGradient() {
+            const randomColor = () => {
+                const r = Math.floor(Math.random() * 256);
+                const g = Math.floor(Math.random() * 256);
+                const b = Math.floor(Math.random() * 256);
+                return '#' + [r, g, b].map(x => {
+                    const hex = x.toString(16);
+                    return hex.length === 1 ? '0' + hex : hex;
+                }).join('');
+            };
+            
+            const color1 = randomColor();
+            const color2 = randomColor();
+            const angle = Math.floor(Math.random() * 361);
+            
+            document.getElementById('color1').value = color1;
+            document.getElementById('color2').value = color2;
+            document.getElementById('angle').value = angle;
+            
+            updateGradient();
+        }
+        
+        function copyCode() {
+            const cssCode = document.getElementById('cssCode').textContent;
+            const button = document.getElementById('copyButton');
+            
+            navigator.clipboard.writeText(cssCode).then(() => {
+                button.textContent = '✅ Copied!';
+                button.classList.add('copied');
+                
+                setTimeout(() => {
+                    button.textContent = '📋 Copy';
+                    button.classList.remove('copied');
+                }, 2000);
+            }).catch(err => {
+                console.error('Copy error:', err);
+                alert('Could not copy code. Please copy manually.');
+            });
+        }
+        
+        // Initialize
+        updateGradient();
+        
+        console.log('Gradient Generator ready!');
+        console.log('Tip: Try the Random button for different combinations!');
+    </script>
+</body>
+</html>

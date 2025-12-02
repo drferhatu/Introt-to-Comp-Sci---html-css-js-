@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Example 3: Form Validation</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 500px;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #6c757d;
+            margin-bottom: 30px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        input.error, select.error {
+            border-color: #dc3545;
+        }
+        
+        input.success, select.success {
+            border-color: #28a745;
+        }
+        
+        .error-message {
+            color: #dc3545;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        .error-message.show {
+            display: block;
+        }
+        
+        .success-message {
+            color: #28a745;
+            font-size: 14px;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        .success-message.show {
+            display: block;
+        }
+        
+        .submit-button {
+            width: 100%;
+            padding: 15px;
+            background-color: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 20px;
+        }
+        
+        .submit-button:hover {
+            background-color: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        .submit-button:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .success-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            text-align: center;
+            z-index: 1000;
+        }
+        
+        .success-modal.show {
+            display: block;
+            animation: slideIn 0.3s ease-out;
+        }
+        
+        @keyframes slideIn {
+            from {
+                transform: translate(-50%, -60%);
+                opacity: 0;
+            }
+            to {
+                transform: translate(-50%, -50%);
+                opacity: 1;
+            }
+        }
+        
+        .success-modal h2 {
+            color: #28a745;
+            margin-bottom: 20px;
+        }
+        
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+        }
+        
+        .overlay.show {
+            display: block;
+        }
+        
+        .close-button {
+            margin-top: 20px;
+            padding: 10px 30px;
+            background-color: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        
+        .explanation {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .explanation h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+        
+        .explanation ul {
+            margin-left: 20px;
+            color: #333;
+        }
+        
+        .explanation li {
+            margin: 5px 0;
+        }
+        
+        .password-strength {
+            height: 5px;
+            background: #ddd;
+            border-radius: 3px;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+        
+        .password-strength-bar {
+            height: 100%;
+            width: 0;
+            transition: all 0.3s;
+        }
+        
+        .password-strength-bar.weak {
+            width: 33%;
+            background: #dc3545;
+        }
+        
+        .password-strength-bar.medium {
+            width: 66%;
+            background: #ffc107;
+        }
+        
+        .password-strength-bar.strong {
+            width: 100%;
+            background: #28a745;
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay" id="overlay"></div>
+    
+    <div class="success-modal" id="successModal">
+        <h2>✅ Success!</h2>
+        <p>Your form has been successfully submitted.</p>
+        <div style="text-align: left; margin: 20px 0; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+            <strong>Submitted Data:</strong>
+            <div id="submittedData"></div>
+        </div>
+        <button class="close-button" onclick="closeModal()">Close</button>
+    </div>
+    
+    <div class="container">
+        <h1>📝 Form Validation</h1>
+        <p class="subtitle">All fields are required</p>
+        
+        <form id="registrationForm" onsubmit="handleSubmit(event)">
+            <div class="form-group">
+                <label for="name">Full Name</label>
+                <input 
+                    type="text" 
+                    id="name" 
+                    placeholder="Ex: John Doe"
+                    oninput="validateName()"
+                >
+                <div class="error-message" id="nameError">Please enter a valid name (at least 3 characters)</div>
+                <div class="success-message" id="nameSuccess">✓ Valid name</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input 
+                    type="email" 
+                    id="email" 
+                    placeholder="example@email.com"
+                    oninput="validateEmail()"
+                >
+                <div class="error-message" id="emailError">Please enter a valid email address</div>
+                <div class="success-message" id="emailSuccess">✓ Valid email</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input 
+                    type="password" 
+                    id="password" 
+                    placeholder="At least 8 characters"
+                    oninput="validatePassword()"
+                >
+                <div class="password-strength">
+                    <div class="password-strength-bar" id="passwordStrengthBar"></div>
+                </div>
+                <div class="error-message" id="passwordError">Password must be at least 8 chars and contain uppercase, lowercase, and a number</div>
+                <div class="success-message" id="passwordSuccess">✓ Strong password</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="age">Age</label>
+                <input 
+                    type="number" 
+                    id="age" 
+                    placeholder="Between 18-100"
+                    oninput="validateAge()"
+                >
+                <div class="error-message" id="ageError">Age must be between 18-100</div>
+                <div class="success-message" id="ageSuccess">✓ Valid age</div>
+            </div>
+            
+            <div class="form-group">
+                <label for="department">Department</label>
+                <select id="department" onchange="validateDepartment()">
+                    <option value="">Select...</option>
+                    <option value="computer">Computer Engineering</option>
+                    <option value="software">Software Engineering</option>
+                    <option value="electrical">Electrical & Electronics</option>
+                    <option value="mechanical">Mechanical Engineering</option>
+                </select>
+                <div class="error-message" id="departmentError">Please select a department</div>
+                <div class="success-message" id="departmentSuccess">✓ Department selected</div>
+            </div>
+            
+            <button type="submit" class="submit-button" id="submitButton" disabled>
+                Submit
+            </button>
+        </form>
+        
+        <div class="explanation">
+            <h3>🎯 Concepts Learned:</h3>
+            <ul>
+                <li><strong>Input Validation:</strong> Real-time form validation</li>
+                <li><strong>Regular Expressions:</strong> Email checking</li>
+                <li><strong>CSS Classes:</strong> Dynamic style switching</li>
+                <li><strong>Event Listeners:</strong> oninput, onchange</li>
+                <li><strong>Form Submission:</strong> event.preventDefault()</li>
+                <li><strong>Modal Windows:</strong> Success message display</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        const validations = {
+            name: false,
+            email: false,
+            password: false,
+            age: false,
+            department: false
+        };
+        
+        function validateName() {
+            const name = document.getElementById('name');
+            const error = document.getElementById('nameError');
+            const success = document.getElementById('nameSuccess');
+            
+            if (name.value.trim().length >= 3) {
+                name.classList.remove('error');
+                name.classList.add('success');
+                error.classList.remove('show');
+                success.classList.add('show');
+                validations.name = true;
+            } else {
+                name.classList.remove('success');
+                name.classList.add('error');
+                success.classList.remove('show');
+                error.classList.add('show');
+                validations.name = false;
+            }
+            
+            checkFormValidity();
+        }
+        
+        function validateEmail() {
+            const email = document.getElementById('email');
+            const error = document.getElementById('emailError');
+            const success = document.getElementById('emailSuccess');
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            
+            if (emailRegex.test(email.value)) {
+                email.classList.remove('error');
+                email.classList.add('success');
+                error.classList.remove('show');
+                success.classList.add('show');
+                validations.email = true;
+            } else {
+                email.classList.remove('success');
+                email.classList.add('error');
+                success.classList.remove('show');
+                error.classList.add('show');
+                validations.email = false;
+            }
+            
+            checkFormValidity();
+        }
+        
+        function validatePassword() {
+            const password = document.getElementById('password');
+            const error = document.getElementById('passwordError');
+            const success = document.getElementById('passwordSuccess');
+            const strengthBar = document.getElementById('passwordStrengthBar');
+            
+            const hasUpperCase = /[A-Z]/.test(password.value);
+            const hasLowerCase = /[a-z]/.test(password.value);
+            const hasNumber = /[0-9]/.test(password.value);
+            const isLongEnough = password.value.length >= 8;
+            
+            // Password strength indicator
+            strengthBar.className = 'password-strength-bar';
+            
+            if (password.value.length === 0) {
+                strengthBar.classList.remove('weak', 'medium', 'strong');
+            } else if (isLongEnough && hasUpperCase && hasLowerCase && hasNumber) {
+                strengthBar.classList.add('strong');
+                password.classList.remove('error');
+                password.classList.add('success');
+                error.classList.remove('show');
+                success.classList.add('show');
+                validations.password = true;
+            } else if (password.value.length >= 6) {
+                strengthBar.classList.add('medium');
+                password.classList.add('error');
+                password.classList.remove('success');
+                error.classList.add('show');
+                success.classList.remove('show');
+                validations.password = false;
+            } else {
+                strengthBar.classList.add('weak');
+                password.classList.add('error');
+                password.classList.remove('success');
+                error.classList.add('show');
+                success.classList.remove('show');
+                validations.password = false;
+            }
+            
+            checkFormValidity();
+        }
+        
+        function validateAge() {
+            const age = document.getElementById('age');
+            const error = document.getElementById('ageError');
+            const success = document.getElementById('ageSuccess');
+            const ageValue = parseInt(age.value);
+            
+            if (ageValue >= 18 && ageValue <= 100) {
+                age.classList.remove('error');
+                age.classList.add('success');
+                error.classList.remove('show');
+                success.classList.add('show');
+                validations.age = true;
+            } else {
+                age.classList.remove('success');
+                age.classList.add('error');
+                success.classList.remove('show');
+                error.classList.add('show');
+                validations.age = false;
+            }
+            
+            checkFormValidity();
+        }
+        
+        function validateDepartment() {
+            const department = document.getElementById('department');
+            const error = document.getElementById('departmentError');
+            const success = document.getElementById('departmentSuccess');
+            
+            if (department.value !== '') {
+                department.classList.remove('error');
+                department.classList.add('success');
+                error.classList.remove('show');
+                success.classList.add('show');
+                validations.department = true;
+            } else {
+                department.classList.remove('success');
+                department.classList.add('error');
+                success.classList.remove('show');
+                error.classList.add('show');
+                validations.department = false;
+            }
+            
+            checkFormValidity();
+        }
+        
+        function checkFormValidity() {
+            const submitButton = document.getElementById('submitButton');
+            const isValid = Object.values(validations).every(v => v === true);
+            submitButton.disabled = !isValid;
+        }
+        
+        function handleSubmit(event) {
+            event.preventDefault();
+            
+            const formData = {
+                name: document.getElementById('name').value,
+                email: document.getElementById('email').value,
+                age: document.getElementById('age').value,
+                department: document.getElementById('department').options[document.getElementById('department').selectedIndex].text
+            };
+            
+            console.log('Form submitted:', formData);
+            
+            // Show success modal
+            document.getElementById('submittedData').innerHTML = `
+                <p><strong>Name:</strong> ${formData.name}</p>
+                <p><strong>Email:</strong> ${formData.email}</p>
+                <p><strong>Age:</strong> ${formData.age}</p>
+                <p><strong>Department:</strong> ${formData.department}</p>
+            `;
+            
+            document.getElementById('overlay').classList.add('show');
+            document.getElementById('successModal').classList.add('show');
+        }
+        
+        function closeModal() {
+            document.getElementById('overlay').classList.remove('show');
+            document.getElementById('successModal').classList.remove('show');
+            document.getElementById('registrationForm').reset();
+            
+            // Reset validations
+            Object.keys(validations).forEach(key => validations[key] = false);
+            checkFormValidity();
+            
+            // Clear all inputs
+            document.querySelectorAll('input, select').forEach(input => {
+                input.classList.remove('success', 'error');
+            });
+            document.querySelectorAll('.error-message, .success-message').forEach(msg => {
+                msg.classList.remove('show');
+            });
+            document.getElementById('passwordStrengthBar').className = 'password-strength-bar';
+        }
+        
+        console.log('Form validation ready!');
+    </script>
+</body>
+</html>
