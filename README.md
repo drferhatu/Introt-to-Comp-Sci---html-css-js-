@@ -50,12 +50,6 @@ This folder contains 5 interactive web development examples prepared for the YMT
 2. Click on the desired example.
 3. Experiment with the examples interactively.
 
-### Showing to Students
-- Use as a live demo in your presentation.
-- Display via projector.
-- Ask students to open them on their own computers.
-- Encourage them to inspect the code (Right Click → View Page Source).
-
 ## 🌐 Online Playground Recommendations
 
 You can also run and edit these examples on online platforms:
@@ -115,7 +109,7 @@ You can also run and edit these examples on online platforms:
 - ✅ Console integration
 - 🎯 Simple for students
 
-## 📖 Tasks for Students
+## 📖 Tasks
 
 ### Beginner Level
 1. Change the counter's starting value to 10.
@@ -167,32 +161,7 @@ You can also run and edit these examples on online platforms:
 - [ ] Math.random()
 - [ ] JSON stringify/parse
 
-## 💡 Presentation Tips
-
-### During Live Demos
-1. **Show the result first** (the working application).
-2. **Then explain the code** (HTML → CSS → JS sequentially).
-3. **Make live changes** (change a color, add a function).
-4. **Show errors** (debug using console.log).
-5. **Ask students questions** ("What do you think this line does?").
-
-### Interactive Class
-- Open on the projector, modify together with students.
-- Ask questions like "Who wants to make this button red?".
-- Open the Console, show the logs.
-- Set breakpoints, demonstrate debugging.
-- Show different screen sizes in Responsive mode.
-
-### As Homework
-- Pick an example.
-- Request 3-5 specific changes.
-- Have them do it on CodePen.
-- Submit via link.
-- Showcase the best 3 in class.
-
 ## 🔧 Debugging
-
-Show these to students:
 
 ### Chrome DevTools
 1. **F12** or **Right Click → Inspect**
@@ -239,8 +208,8 @@ To customize these examples:
 
 ## 🤝 Contribution
 
-Students can:
-- Use these examples in their own projects.
+You can:
+- Use these examples in your own projects.
 - Develop them further.
 - Share them.
 - Modify them for learning purposes.
